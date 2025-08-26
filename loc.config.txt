@@ -1,0 +1,3 @@
+the configuration files are written in this path
+
+/app/gitea/custom/conf/app.ini
