@@ -26,7 +26,7 @@ jobs:
 
       - name: Build, Tag, and Push Docker image
         run: |
-          IMAGE_URI=AKIAROONEO7J2LV37OT6.dkr.ecr.ap-south-1.amazonaws.com/gitea-project:latest
+          IMAGE_URI=099751327699.dkr.ecr.ap-south-1.amazonaws.com/gitea-project
           echo "Building image: $IMAGE_URI"
           docker build -t $IMAGE_URI .
           docker push $IMAGE_URI
