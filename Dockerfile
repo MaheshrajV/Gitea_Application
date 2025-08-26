@@ -1,4 +1,4 @@
-# Stage 1: Build Gitea from local source
+# Stage 1: Build Gitea from source
 FROM golang:1.24-bookworm AS build
 
 # Install build dependencies
@@ -15,11 +15,10 @@ RUN tar -xJf /tmp/node.tar.xz -C /usr/local --strip-components=1 \
     && rm /tmp/node.tar.xz \
     && node -v && npm -v
 
-# Set workdir for source
+# Clone Gitea source (instead of copying partial files without Makefile)
+# Change the branch/tag as needed (e.g. v1.22.0)
 WORKDIR /src
-
-# Copy local Gitea source
-COPY gitea/ ./
+RUN git clone --branch v1.22.0 https://github.com/go-gitea/gitea.git . 
 
 # Build backend + frontend assets
 RUN TAGS="bindata sqlite sqlite_unlock_notify" make build
