@@ -2,11 +2,10 @@ name: Build and Push to ECR
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "master" ]   # Change if you want another branch
 
 jobs:
-  build:
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,12 +23,17 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build Docker image
+      - name: Build, Tag, and Push image to ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: gitea-project   # change if needed
+          IMAGE_TAG: latest
         run: |
-          IMAGE_URI=099751327699.dkr.ecr.ap-south-1.amazonaws.com//gitea-project:latest
-          docker build -t $IMAGE_URI .
-          echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
-
-      - name: Push Docker image
-        run: |
-          docker push $IMAGE_URI
+          echo "Building Docker image..."
+          docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
+          
+          echo "Tagging image..."
+          docker tag $ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          
+          echo "Pushing to ECR..."
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
