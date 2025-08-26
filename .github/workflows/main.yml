@@ -2,8 +2,8 @@ name: Build and Push to ECR
 
 on:
   push:
-    branches: [ "main" ]
-  workflow_dispatch:
+    branches:
+      - main
 
 jobs:
   build:
@@ -24,9 +24,12 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build, Tag, and Push Docker image
+      - name: Build Docker image
         run: |
-          IMAGE_URI=099751327699.dkr.ecr.ap-south-1.amazonaws.com/gitea-project
-          echo "Building image: $IMAGE_URI"
+          IMAGE_URI=099751327699.dkr.ecr.ap-south-1.amazonaws.com//gitea-project:latest
           docker build -t $IMAGE_URI .
+          echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
+
+      - name: Push Docker image
+        run: |
           docker push $IMAGE_URI
